@@ -1,0 +1,42 @@
+{
+  "name": "@magnit-ce/record-tree",
+  "version": "0.0.1",
+  "description": "A custom html element that renders javascript objects as a collapsible tree-like structure of nested detail elements.",
+  "type": "module",
+  "main": "dist/record-tree.js",
+  "module": "dist/record-tree.mjs",
+  "types": "dist/record-tree.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup record-tree.ts --format cjs,esm --dts --clean",
+    "build-vanilla": "tsup record-tree.ts --format esm --dts --clean --outDir ./vanilla",
+    "minify": "tsup record-tree.ts --format esm --config ./tsup.config.min.ts --outDir ./vanilla --minify",
+    "lint": "tsup record-tree.ts --format esm --tsconfig ./tsconfig.lint.json",
+    "package": "npm run build && npm run build-vanilla && npm run minify",
+    "release": "npm run package && changeset publish"
+  },
+  "keywords": [
+    "custom",
+    "element",
+    "html",
+    "json",
+    "object",
+    "tree",
+    "visualizer"
+  ],
+  "author": "catapart",
+  "license": "CC0-1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/catapart/magnitce-record-tree"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.7",
+    "minify": "^11.4.0",
+    "terser": "^5.31.3",
+    "tsup": "^8.2.0",
+    "typescript": "^5.5.3"
+  }
+}

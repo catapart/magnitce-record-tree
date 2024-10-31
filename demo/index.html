@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Tree Demo</title>
+    <link rel="stylesheet" href="./demo-page.css">
+    <style>
+        article .example
+        {
+            margin-inline: 1em;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Overview</h1>
+        <div class="overview">
+            <p>The <code>&lt;record-tree&gt;</code> element renders arbitrary javascript objects as nested child elements based on the provided object's properties.</p>
+            <p>In addition to rendering the structure of objects, it provides limited object editing to allow for removing properties from the object. It also provides a data collection function that composes a new object with only the unremoved properties.</p>
+            <p>The default rendering and functionality are intended to support the arrangement of imports and exports, but the element is customizeable to allow for more generic usage.</p>
+        </div>
+        <h1>Examples</h1>
+        <article class="basic">
+            <header>Basic Examples</header>
+            <p>The <code>&lt;record-tree&gt;</code> element is a renderer for a javascript object and, as such, does not render as anything before the <code>setData()</code> function has been called to provide an object to render.</p>
+            <p>Before the <code>setData()</code> function is called, the <code>&lt;record-tree&gt;</code> element will not be visible with default styling, due to collapsing to a height of zero.</p>
+            <p>When data has been provided, the <code>&lt;record-tree&gt;</code> element will render each of that object's properties either as a property, a collection, or an object.</p>
+            <p>Properties are typically rendered in a collapsible list at the start of an object's content. This keeps property names nearest to their parent object, for visual clarity. When rendering arrays, adding a second "properties" toggle-list is redundant, so each array element is rendered as a <code>&lt;div&gt;</code> element.</p>
+            <p>Collections are rendered as <code>&lt;details&gt;</code> elements that contain each of the array's values. The array items are rendered as properties.</p>
+            <p>Objects are also rendered as <code>&lt;details&gt;</code> elements, but nested objects are rendered identically to top-level objects, due to recursive functionality.</p>
+            <p>This example shows the default rendering of a complex object, including null/undefined values, binary values, and collection-type values:</p>
+            <div class="example">
+                <record-tree></record-tree>
+            </div>
+            <script type="module">
+                const basicExample = document.querySelector('article.basic');
+                const basicRecordTree = basicExample.querySelector('record-tree')
+                const basicLog = document.querySelector('article.basic .log ul');
+                document.addEventListener('DOMContentLoaded', async () =>
+                {
+                    const complexObject = new ComplexObject("Parameter value");
+                    await complexObject.init();
+                    basicRecordTree.setData({
+                        valueA: "Text data",
+                        number: 42,
+                        boolean: true,
+                        blankText: "",
+                        null: null,
+                        undefined: undefined,
+                        array: ["entry 1", "entry 2", "entry 3"],
+                        object: complexObject,
+                    })
+                });  
+
+                class ComplexObject
+                {
+                    #customProperty = "";
+                    get customProperty()
+                    {
+                        return this.#customProperty;
+                    }
+                    set customProperty(value)
+                    {
+                        this.#customProperty = value;
+                    }
+
+                    #imageData = null;
+                    get imageData()
+                    {
+                        return this.#imageData;
+                    }
+                    set imageData(value)
+                    {
+                        this.#imageData = value;
+                    }
+
+                    fileData = null;
+
+                    subtext = "sub text data";
+                    subnumber = -50000000000000000000000;
+                    subarray = ["subentry 1", "subentry 2", "subentry 3"];
+                    subobject = {
+                        text: "recursive rendering for deep nesting"
+                    };
+
+                    constructor(parameter)
+                    {
+                        this.parameter = parameter;
+                        this.customProperty = 'Custom Value';
+                    }
+
+                    async init()
+                    {
+                        this.imageData = await this.getImageData('./smile.png');
+                        this.fileData = await this.getFileData('./hello-world.txt');
+                    }
+
+                    async getImageData(url)
+                    {
+                        const response = await fetch(url);
+                        const fileBlob = await response.blob();
+                        const bitmap = await createImageBitmap(fileBlob);
+                        return bitmap;
+                    }
+
+                    async getFileData(url)
+                    {
+                        const response = await fetch(url);
+                        const fileBlob = await response.blob();
+                        const filename = url.substring(url.lastIndexOf('/')+1);
+                        const file = new File([fileBlob], filename);
+                        return file;
+                    }
+                }               
+            </script>
+        </article>
+        <article class="data">
+            <header>Setting and Getting Data</header>
+            <p>The <code>&lt;record-tree&gt;</code> element provides editing functionality for removing properties from each object. By using the "remove" buttons, each property or collection can be removed from the object.</p>
+            <p>After calling <code>setData()</code> to populate the <code>&lt;record-tree&gt;</code> element, any changes made are represented either by the DOM tree itself, or by the "removed" class on properties, depending upon the current removal method.</p>
+            <p>Once the <code>&lt;record-tree&gt;</code> element has been modified, the <code>getUpdatedData()</code> function can be used to retrieve a representation of the modified object. For most properties, removing them will prevent them from being present in the returned object. For array elements, though, each removed element will be replaced with <code>null</code> in the returned object, as a way to preserve the indexes of the items that were removed.</p>
+            <p>Modify the contents of the example, below, by removing some of the properties. Then use the "Get Data" button to log the object that is returned by the <code>getUpdatedData()</code> function.</p>
+            <div class="example">
+                <record-tree placeholder="No content loaded" removed-class></record-tree>
+                <button class="get-data" type="button">Get Data</button>
+            </div>
+            <div class="log">
+                <header>
+                    <span class="title">Log</span>
+                </header>
+                <ul></ul>
+            </div>
+            <script type="module">
+                const dataExample = document.querySelector('article.data');
+                const dataRecordTree = dataExample.querySelector('record-tree')
+                const dataGetButton = dataExample.querySelector('.get-data')
+                const dataLog = document.querySelector('article.data .log ul');
+                document.addEventListener('DOMContentLoaded', () =>
+                {
+                    dataRecordTree.setData({
+                        valueA: "Content A",
+                        valueB: "Content B",
+                        valueC: "Content C",
+                        valueDArray: ["Content D 1", "Content D 2", "Content D 3"],
+                        valueEObject: {
+                            valueF: "Content F",
+                            valueG: "Content G"
+                        },
+                    });
+
+                    dataGetButton.addEventListener('click', () =>
+                    {
+                        const updatedData = dataRecordTree.getUpdatedData();
+                        logResult(updatedData);
+                    })
+                });  
+                function logResult(result)
+                {
+                    const entryElement = document.createElement('li');
+                    const codeElement = document.createElement('code');
+                    const preElement = document.createElement('pre');
+                    preElement.textContent = JSON.stringify(result, null, 2);
+                    codeElement.append(preElement);
+                    entryElement.append(codeElement);
+                    dataLog.append(entryElement);
+                }                
+            </script>
+        </article>
+        <article class="customization">
+            <header>Customization</header>
+            <p>The <code>&lt;record-tree&gt;</code> element allows complete customization for each element that is rendered by exposing all of its rendering functions, along with helper functions that can conditionally customize rendering.</p>
+            <p>The "custom renderer" functions are lower-level functions that require the developer to provide the entire structure of a property based on its property name, value, and placement in the heirarchy. These functions are useful for fine control over layout rendering.</p>
+            <p>The "custom generator" functions are higher-level functions that only require the developer to provide either the property name element or the property value element. These functions are useful for simple operations like text formatting.</p>
+            <p>All of the customization functions work by calling the "conditional" function which is a function that determines when to use the custom functionality. If you want the custom functionality to work on all properties, for example, you could set the conditional to always return <code>true</code>.</p>
+            <p>In this example, the <code>default_image</code> property is being rendered using the default value generation method, while the <code>custom_image</code> property is using a custom value generator that injects the image data into an <code>&lt;img&gt;</code> element. Likewise, the <code>ugly_property_name</code> property is using a custom renderer to render its name as "Custom Property Name".</p>
+            <div class="example">
+                <record-tree placeholder="No content loaded" removed-class parent-name="Custom Data"></record-tree>
+            </div>
+            <script type="module">
+                const customizationExample = document.querySelector('article.customization');
+                const customizationRecordTree = customizationExample.querySelector('record-tree')
+                const customizationLog = document.querySelector('article.customization .log ul');
+                document.addEventListener('DOMContentLoaded', async () =>
+                {
+                    const imageData = await getImageData('./smile.png');
+
+                    // customize the value by adding a value generator
+                    customizationRecordTree.addCustomPropertyValueGenerator(
+                    (propertyName, value) => // condition - true to use the generator, false to use default
+                    {
+                        return propertyName == "custom_image";
+                    },
+                    (_, value) => // generator - return an html element for this value
+                    {
+                        const image = new Image();
+                        image.src = value;
+                        return image;
+                    });
+
+                    // customize the property name by adding a name generator
+                    customizationRecordTree.addCustomPropertyNameGenerator(
+                    (propertyName, value) => // condition - true to use the generator, false to use default
+                    {
+                        return propertyName == "ugly_property_name";
+                    },
+                    (_, value) => // generator - return an html element
+                    {
+                        const span = document.createElement('span');
+                        span.textContent = "Custom Property Name";
+                        return span;
+                    });
+
+                    customizationRecordTree.setData({
+                        default_image: imageData,
+                        custom_image: imageData,
+                        ugly_property_name: "Custom Name Display"
+                    })
+                });
+
+                async function getImageData(url)
+                {
+                    const response = await fetch(url);
+                    const fileBlob = await response.blob();
+                    const reader = new FileReader();
+                    const imageData = await new Promise((resolve) =>
+                    {
+                        reader.readAsDataURL(fileBlob);
+                        reader.onloadend = () =>
+                        {
+                            resolve(reader.result);
+                        }
+                    });
+                    return imageData;
+                }
+            </script>
+        </article>
+        <article class="events">
+            <header>Events</header>
+            <p>The <code>&lt;record-tree&gt;</code> element dispatches events whenever the object's properties are modified by a user. When a property is removed, either by class name or by removal from the DOM, the <code>remove</code> event is dispatched. If removal is being done by class name, the user has the ability to restore the property back to the object. When that occurs, the <code>restore</code> event is dispatched.</p>
+            <p>In this example, each of these events is handled by logging the event's <code>detail</code> object, in the log below.</p>
+            <div class="example">
+                <record-tree placeholder="No content loaded" removed-class></record-tree>
+            </div>
+            <div class="log">
+                <header>
+                    <span class="title">Log</span>
+                </header>
+                <ul></ul>
+            </div>
+            <script type="module">
+                const eventsExample = document.querySelector('article.events');
+                const eventsRecordTree = eventsExample.querySelector('record-tree')
+                const eventsLog = document.querySelector('article.events .log ul');
+                document.addEventListener('DOMContentLoaded', () =>
+                {
+                    eventsRecordTree.addEventListener('remove', (event) =>
+                    {
+                        logResult({ ...event.detail, eventType: 'remove' });
+                    });
+                    eventsRecordTree.addEventListener('restore', (event) =>
+                    {
+                        logResult({ ...event.detail, eventType: 'restore' });
+                    });
+
+                    eventsRecordTree.setData({
+                        valueA: "Content A",
+                        valueB: "Content B",
+                        valueC: "Content C",
+                        valueDArray: ["Content D 1", "Content D 2", "Content D 3"],
+                        valueEObject: {
+                            valueF: "Content F",
+                            valueG: "Content G",
+                            valueHObject: {
+                                valueI: "Content I",
+                                valueJ: "Content J",
+                                valueK: "Content K"
+                            }
+                        },
+                    })
+                });  
+                function logResult(result)
+                {
+                    const entryElement = document.createElement('li');
+                    const codeElement = document.createElement('code');
+                    const preElement = document.createElement('pre');
+                    preElement.textContent = JSON.stringify(result, null, 2);
+                    codeElement.append(preElement);
+                    entryElement.append(codeElement);
+                    eventsLog.append(entryElement);
+                }                
+            </script>
+        </article>
+    </main>
+    <script type="module" src="../vanilla/record-tree.js"></script>
+</body>
+</html>

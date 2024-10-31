@@ -1,0 +1,124 @@
+record-tree
+{
+    display: block;
+    --spacing: 7px;
+    --indent: 20px;
+}
+
+record-tree .collection
+{
+    border-radius: 3px;
+    padding: var(--spacing);
+    border: solid 1px transparent;
+}
+record-tree .collection:hover
+{
+    border-color: graytext;
+}
+
+record-tree .collection > .collection
+{
+    margin-left: var(--indent);
+    margin-block: var(--spacing);
+}
+
+record-tree .collection > .property:first-of-type
+{
+    margin-top: var(--spacing);
+}
+record-tree .collection > .property
+{
+    margin-left: var(--indent);
+}
+record-tree .collection > .property:last-of-type
+{
+    margin-bottom: var(--spacing);
+}
+
+record-tree .removed
+{
+    scale: .99;
+    color: graytext;
+}
+
+record-tree summary
+{
+    user-select: none;
+    display: flex;
+    gap: var(--spacing);
+}
+record-tree summary:before
+{
+    content: '▶';
+    transition: transform 100ms ease-out;
+    font-size: .78em;
+    align-self: center;
+    margin-right: var(--spacing);
+}
+record-tree details[open] > summary:before
+{
+    transform: rotate(90deg);
+}
+record-tree summary .name
+{
+    flex: 1;
+}
+record-tree :not(.properties) > summary .name
+{
+    font-weight: bold;
+    font-size: .8em;
+}
+
+record-tree ul
+{
+    margin-block: var(--spacing);
+    margin-left: var(--indent);
+    padding: 0;
+}
+
+record-tree .property
+{
+    user-select: none;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+    border: solid 1px transparent;
+}
+record-tree .property:hover
+{
+    border-color: graytext;
+}
+
+record-tree .property .name
+{
+    font-weight: bold;
+    font-size: .8em;    
+    text-align: right;
+
+    padding-left: var(--spacing);
+    padding-block: var(--spacing);
+    width: var(--property-name-width);
+}
+record-tree .property .value
+{
+    padding-inline: var(--spacing);
+    padding-block: var(--spacing);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+record-tree button
+{
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: var(--spacing);
+}
+
+record-tree button .icon
+{
+    --size: 14px;
+    width: var(--size);
+    height: var(--size);
+}
