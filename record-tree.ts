@@ -266,21 +266,21 @@ export class RecordTreeElement extends HTMLElement
             const pathMinusLastEntry = this.path.filter((item, index) => (index < (this.path.length-1)));
             let properties = this.querySelector(`details[data-path="${pathMinusLastEntry.join('.')}.properties"]`);
             let propertyList = (properties == null) ? null : properties.querySelector('ul');
-            let propertiesDetails = null;
+            // let propertiesDetails = null;
 
             if(properties == null)
             {
-                propertiesDetails = this.createCollectionDetailsElement('Properties', `${pathMinusLastEntry.join('.')}.properties`, ['collection', 'properties'], false);
-                propertiesDetails.toggleAttribute('open', true);
+                properties = this.createCollectionDetailsElement('Properties', `${pathMinusLastEntry.join('.')}.properties`, ['collection', 'properties'], false);
+                properties.toggleAttribute('open', true);
                 propertyList = document.createElement('ul');
-                propertiesDetails.append(propertyList);
+                properties.append(propertyList);
 
-                parentElement.append(propertiesDetails);
+                parentElement.append(properties);
             }
 
             if(propertyList!.children.length > 10)
             {
-                propertiesDetails!.toggleAttribute('open', false);
+                properties!.toggleAttribute('open', false);
             }
             
             // render property
