@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.4
+
+### Patch Changes
+
+- 7aa8efc: updated undo icon
+
 ## 0.0.3
 
 ### Patch Changes
