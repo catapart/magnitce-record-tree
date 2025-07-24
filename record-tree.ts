@@ -422,8 +422,8 @@ export class RecordTreeElement extends HTMLElement
             const removeButton = document.createElement('button');
             removeButton.innerHTML = ICON_CANCEL_CROSS;
             removeButton.title = 'Remove';
-            removeButton.classList.add('remove');
-            removeButton.part.add('remove');
+            removeButton.classList.add('button', 'icon-button', 'remove');
+            removeButton.part.add('button', 'icon-button', 'remove');
             summary.append(removeButton);
         }
         
@@ -519,8 +519,8 @@ export class RecordTreeElement extends HTMLElement
         const removeButton = document.createElement('button');
         removeButton.innerHTML = ICON_CANCEL_CROSS;
         removeButton.title = 'Remove';
-        removeButton.classList.add('remove');
-        removeButton.part.add('remove');
+        removeButton.classList.add('button', 'icon-button', 'remove');
+        removeButton.part.add('button', 'icon-button', 'remove');
 
         property.append(name, delimiter, valueSpan, removeButton);
         
@@ -633,8 +633,8 @@ export class RecordTreeElement extends HTMLElement
         const removeButton = document.createElement('button');
         removeButton.innerHTML = ICON_CANCEL_CROSS;
         removeButton.title = 'Remove';
-        removeButton.classList.add('remove');
-        removeButton.part.add('remove');
+        removeButton.classList.add('button', 'icon-button', 'remove');
+        removeButton.part.add('button', 'icon-button', 'remove');
 
         property.append(valueSpan, removeButton);
 
