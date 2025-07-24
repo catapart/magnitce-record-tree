@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.5
+
+### Patch Changes
+
+- 2c46480: added parts to elements
+
 ## 0.0.4
 
 ### Patch Changes
