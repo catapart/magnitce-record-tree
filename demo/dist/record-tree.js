@@ -53,6 +53,7 @@ var RecordTreeElement = class extends HTMLElement {
       const isRemoved = parentToRemove.classList.contains(removeAttributeName);
       if (isRemoved) {
         parentToRemove.classList.remove(removeAttributeName);
+        parentToRemove.part.remove(removeAttributeName);
         if (parentToRemove.dataset.path != ".properties") {
           this.#removedPaths.delete(parentToRemove.dataset.path);
         }
@@ -61,12 +62,14 @@ var RecordTreeElement = class extends HTMLElement {
         this.dispatchEvent(new CustomEvent("restore", { detail: { path: parentToRemove.dataset.path } }));
       } else {
         parentToRemove.classList.add(removeAttributeName);
+        parentToRemove.part.add(removeAttributeName);
         if (parentToRemove.dataset.path != ".properties") {
           this.#removedPaths.add(parentToRemove.dataset.path);
         }
         removeButton.innerHTML = ICON_UNDO;
         removeButton.title = "Undo";
         removeButton.classList.add("undo");
+        removeButton.part.add("undo");
         this.dispatchEvent(new CustomEvent("remove", { detail: { path: parentToRemove.dataset.path } }));
       }
     } else {
@@ -217,18 +220,21 @@ var RecordTreeElement = class extends HTMLElement {
     const details = document.createElement("details");
     if (classes != null) {
       details.classList.add(...classes);
+      details.part.add(...classes);
     }
     details.setAttribute("data-path", path);
     const summary = document.createElement("summary");
     const nameSpan = document.createElement("span");
     nameSpan.textContent = name;
     nameSpan.classList.add("name");
+    nameSpan.part.add("name");
     summary.append(nameSpan);
     if (preventRemoveButton != false) {
       const removeButton = document.createElement("button");
       removeButton.innerHTML = ICON_CANCEL_CROSS;
       removeButton.title = "Remove";
       removeButton.classList.add("remove");
+      removeButton.part.add("remove");
       summary.append(removeButton);
     }
     details.append(summary);
@@ -264,6 +270,7 @@ var RecordTreeElement = class extends HTMLElement {
     const tagName = parentElement instanceof HTMLUListElement ? "li" : "div";
     const property = document.createElement(tagName);
     property.classList.add("property");
+    property.part.add("property");
     property.dataset.path = this.path.join(".");
     let nameGenerator = this.createPropertyName;
     for (let i = 0; i < this.#customPropertyNameGenerators.length; i++) {
@@ -275,6 +282,7 @@ var RecordTreeElement = class extends HTMLElement {
     const name = await nameGenerator(title, value, parentElement);
     const delimiter = document.createElement("span");
     delimiter.classList.add("delimiter");
+    delimiter.part.add("delimiter");
     delimiter.textContent = ":";
     let valueGenerator = this.createPropertyValue.bind(this);
     for (let i = 0; i < this.#customPropertyValueGenerators.length; i++) {
@@ -288,6 +296,7 @@ var RecordTreeElement = class extends HTMLElement {
     removeButton.innerHTML = ICON_CANCEL_CROSS;
     removeButton.title = "Remove";
     removeButton.classList.add("remove");
+    removeButton.part.add("remove");
     property.append(name, delimiter, valueSpan, removeButton);
     property.title = `${name.getAttribute("title")}: ${valueSpan.getAttribute("title")}`;
     parentElement.append(property);
@@ -299,6 +308,7 @@ var RecordTreeElement = class extends HTMLElement {
   createPropertyName(title, value, parentElement) {
     const name = document.createElement("span");
     name.classList.add("name");
+    name.part.add("name");
     name.textContent = title;
     name.title = title;
     return name;
@@ -306,6 +316,7 @@ var RecordTreeElement = class extends HTMLElement {
   createPropertyValue(title, value, parentElement) {
     const valueSpan = document.createElement("span");
     valueSpan.classList.add("value");
+    valueSpan.part.add("value");
     if (value === void 0) {
       const undefinedTextValue = this.getAttribute("undefined-value") ?? "[ undefined ]";
       value = undefinedTextValue;
@@ -348,15 +359,18 @@ var RecordTreeElement = class extends HTMLElement {
   async renderObjectAsValue(key, value, parentElement) {
     const property = document.createElement("li");
     property.classList.add("property");
+    property.part.add("property");
     property.dataset.path = this.path.join(".");
     const valueSpan = document.createElement("span");
     valueSpan.classList.add("value");
+    valueSpan.part.add("value");
     valueSpan.textContent = value.toString();
     valueSpan.title = "[ Object ]";
     const removeButton = document.createElement("button");
     removeButton.innerHTML = ICON_CANCEL_CROSS;
     removeButton.title = "Remove";
     removeButton.classList.add("remove");
+    removeButton.part.add("remove");
     property.append(valueSpan, removeButton);
     parentElement.append(property);
   }
@@ -372,8 +386,10 @@ var RecordTreeElement = class extends HTMLElement {
           textContent = i.toString();
         }
         $summary.classList.add("property");
+        $summary.part.add("property");
         $summary.textContent = textContent.substring(0, Math.min(textContent.length, 20));
         $details.classList.add("subrecord");
+        $details.part.add("subrecord");
         parent.appendChild($details);
         $details.appendChild($summary);
         this.renderDataObject(value, $details);
@@ -385,8 +401,10 @@ var RecordTreeElement = class extends HTMLElement {
           const $details = document.createElement("details");
           const $summary = document.createElement("summary");
           $summary.classList.add("property");
+          $summary.part.add("property");
           $summary.textContent = key;
           $details.classList.add("subrecord");
+          $details.part.add("subrecord");
           parent.appendChild($details);
           $details.appendChild($summary);
           this.renderDataObject(value, $details);
@@ -400,11 +418,14 @@ var RecordTreeElement = class extends HTMLElement {
           }
           const $property = document.createElement("li");
           $property.classList.add("property");
+          $property.part.add("property");
           const $name = document.createElement("span");
           $name.classList.add("name");
+          $name.part.add("name");
           $name.textContent = key;
           const $value = document.createElement("span");
           $value.classList.add("value");
+          $value.part.add("value");
           let textContent = value.toString();
           $value.textContent = textContent.substring(0, Math.min(textContent.length, 20));
           $property.append($name, $value);

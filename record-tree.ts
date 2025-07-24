@@ -94,6 +94,7 @@ export class RecordTreeElement extends HTMLElement
             if(isRemoved)
             {
                 parentToRemove.classList.remove(removeAttributeName);
+                parentToRemove.part.remove(removeAttributeName);
                 if(parentToRemove.dataset.path != ".properties")
                 {
                     this.#removedPaths.delete(parentToRemove.dataset.path!);
@@ -105,6 +106,7 @@ export class RecordTreeElement extends HTMLElement
             else
             {
                 parentToRemove.classList.add(removeAttributeName);
+                parentToRemove.part.add(removeAttributeName);
                 if(parentToRemove.dataset.path != ".properties")
                 {
                     this.#removedPaths.add(parentToRemove.dataset.path!);
@@ -112,6 +114,7 @@ export class RecordTreeElement extends HTMLElement
                 removeButton.innerHTML = ICON_UNDO;
                 removeButton.title = 'Undo';
                 removeButton.classList.add('undo');
+                removeButton.part.add('undo');
                 this.dispatchEvent(new CustomEvent('remove', { detail: { path: parentToRemove.dataset.path } }));
             }
         }
@@ -402,6 +405,7 @@ export class RecordTreeElement extends HTMLElement
         if(classes != null) 
         {
             details.classList.add(...classes);
+            details.part.add(...classes);
         }
         details.setAttribute('data-path', path);
 
@@ -409,6 +413,7 @@ export class RecordTreeElement extends HTMLElement
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         nameSpan.classList.add('name');
+        nameSpan.part.add('name');
 
         summary.append(nameSpan);
 
@@ -418,6 +423,7 @@ export class RecordTreeElement extends HTMLElement
             removeButton.innerHTML = ICON_CANCEL_CROSS;
             removeButton.title = 'Remove';
             removeButton.classList.add('remove');
+            removeButton.part.add('remove');
             summary.append(removeButton);
         }
         
@@ -479,6 +485,7 @@ export class RecordTreeElement extends HTMLElement
         const tagName = (parentElement instanceof HTMLUListElement) ? 'li' : 'div';
         const property = document.createElement(tagName);
         property.classList.add('property');
+        property.part.add('property');
         property.dataset.path = this.path.join('.');
 
         let nameGenerator:(title: string, value: any, parentElement: HTMLElement) => HTMLElement|Promise<HTMLElement> = this.createPropertyName;
@@ -494,6 +501,7 @@ export class RecordTreeElement extends HTMLElement
 
         const delimiter = document.createElement('span');
         delimiter.classList.add('delimiter');
+        delimiter.part.add('delimiter');
         delimiter.textContent = ':';
 
         let valueGenerator:(title: string, value: any, parentElement: HTMLElement) => HTMLElement|Promise<HTMLElement> = this.createPropertyValue.bind(this);
@@ -512,6 +520,7 @@ export class RecordTreeElement extends HTMLElement
         removeButton.innerHTML = ICON_CANCEL_CROSS;
         removeButton.title = 'Remove';
         removeButton.classList.add('remove');
+        removeButton.part.add('remove');
 
         property.append(name, delimiter, valueSpan, removeButton);
         
@@ -531,6 +540,7 @@ export class RecordTreeElement extends HTMLElement
     {
         const name = document.createElement('span');
         name.classList.add('name');
+        name.part.add('name');
         name.textContent = title;
         name.title = title;
         return name;
@@ -539,6 +549,7 @@ export class RecordTreeElement extends HTMLElement
     {
         const valueSpan = document.createElement('span');
         valueSpan.classList.add('value');
+        valueSpan.part.add('value');
 
         if(value === undefined)
         {
@@ -602,10 +613,12 @@ export class RecordTreeElement extends HTMLElement
     {        
         const property = document.createElement('li');
         property.classList.add('property');
+        property.part.add('property');
         property.dataset.path = this.path.join('.');
 
         const valueSpan = document.createElement('span');
         valueSpan.classList.add('value');
+        valueSpan.part.add('value');
         // valueSpan.title = (options.propertyTransformation != null)
         // ? await options.propertyTransformation(value)
         // : (value == null) 
@@ -621,6 +634,7 @@ export class RecordTreeElement extends HTMLElement
         removeButton.innerHTML = ICON_CANCEL_CROSS;
         removeButton.title = 'Remove';
         removeButton.classList.add('remove');
+        removeButton.part.add('remove');
 
         property.append(valueSpan, removeButton);
 
@@ -644,9 +658,11 @@ export class RecordTreeElement extends HTMLElement
                 let textContent = value.name ?? value.description ?? value.key;
                 if(textContent == null || textContent.trim() == "") { textContent = i.toString(); }
                 $summary.classList.add('property');
+                $summary.part.add('property');
                 $summary.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
                 $details.classList.add('subrecord');
+                $details.part.add('subrecord');
                 parent.appendChild($details);
                 $details.appendChild($summary);
 
@@ -667,9 +683,11 @@ export class RecordTreeElement extends HTMLElement
     
                     // let textContext = key;
                     $summary.classList.add('property');
+                    $summary.part.add('property');
                     $summary.textContent = key;
 
                     $details.classList.add('subrecord');
+                    $details.part.add('subrecord');
                     parent.appendChild($details);
                     $details.appendChild($summary);
 
@@ -689,13 +707,16 @@ export class RecordTreeElement extends HTMLElement
 
                     const $property = document.createElement('li');
                     $property.classList.add('property');
+                    $property.part.add('property');
 
                     const $name = document.createElement('span');
                     $name.classList.add('name');
+                    $name.part.add('name');
                     $name.textContent = key;
 
                     const $value = document.createElement('span');
                     $value.classList.add('value');
+                    $value.part.add('value');
                     let textContent = (value as any).toString();
                     $value.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
