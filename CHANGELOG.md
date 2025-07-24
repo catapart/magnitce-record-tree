@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.6
+
+### Patch Changes
+
+- b5cd1cf: added button classes and parts
+
 ## 0.0.5
 
 ### Patch Changes
