@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.10
+
+### Patch Changes
+
+- 5f893c3: updated details parts and classes
+
 ## 0.0.9
 
 ### Patch Changes
