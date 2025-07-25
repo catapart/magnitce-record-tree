@@ -400,7 +400,7 @@ export class RecordTreeElement extends HTMLElement
         return updatedData as T;
     }
 
-    createCollectionDetailsElement(name: string, path: string, classes?: string[], preventRemoveButton?: boolean)
+    createCollectionDetailsElement(name: string, path: string, classes?: string[], preventRemoveButton?: boolean, isTop?: boolean)
     {
 
         const details = document.createElement('details');
@@ -414,6 +414,10 @@ export class RecordTreeElement extends HTMLElement
         const summary = document.createElement('summary');
         summary.classList.add('summary');
         summary.part.add('summary', 'collection', ...classes ?? []);
+        if(isTop != null && isTop == true)
+        {
+            summary.part.add('top');
+        }
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         nameSpan.classList.add('name');
@@ -440,7 +444,7 @@ export class RecordTreeElement extends HTMLElement
     {
         const name = (isNaN(parseInt(key))) ? key : `[${key}]`;
 
-        const details = this.createCollectionDetailsElement(name, this.path.join('.'), ['collection']);
+        const details = this.createCollectionDetailsElement(name, this.path.join('.'), ['collection'], undefined, isTop);
         if(this.path.length == 0)
         {
             details.setAttribute('open', '');
@@ -474,7 +478,7 @@ export class RecordTreeElement extends HTMLElement
         : (data.id != null && data.id.toString().trim() != "")
         ? data.id
         : `[${key}]`;
-        const details = this.createCollectionDetailsElement(name, this.path.join('.'), ['collection']);
+        const details = this.createCollectionDetailsElement(name, this.path.join('.'), ['collection'], undefined, isTop);
         if(this.path.length == 0)
         {
             details.setAttribute('open', '');
