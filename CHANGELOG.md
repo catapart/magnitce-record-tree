@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.11
+
+### Patch Changes
+
+- 427cff3: added classes and parts for properties list
+
 ## 0.0.10
 
 ### Patch Changes
