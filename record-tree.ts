@@ -560,7 +560,7 @@ export class RecordTreeElement extends HTMLElement
     {
         const name = document.createElement('span');
         name.classList.add('name');
-        name.part.add('name', 'property');
+        name.part.add('name', 'property-name');
         name.textContent = title;
         name.title = title;
         return name;
@@ -739,12 +739,12 @@ export class RecordTreeElement extends HTMLElement
 
                     const $name = document.createElement('span');
                     $name.classList.add('name');
-                    $name.part.add('name', 'property');
+                    $name.part.add('name', 'property-name');
                     $name.textContent = key;
 
                     const $value = document.createElement('span');
                     $value.classList.add('value');
-                    $value.part.add('value', 'property');
+                    $value.part.add('value', 'property-value');
                     let textContent = (value as any).toString();
                     $value.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
