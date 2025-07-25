@@ -108,7 +108,7 @@ var RecordTreeElement = class extends HTMLElement {
           break;
         }
       }
-      await renderer.call(this, lastPathEntry, data, parentElement);
+      await renderer.call(this, lastPathEntry, data, parentElement, true);
     } else if (Object.prototype.toString.call(data) === "[object Object]") {
       data = this.draftObject(data);
       let renderer = this.renderObjectAsCollection;
@@ -118,7 +118,7 @@ var RecordTreeElement = class extends HTMLElement {
           break;
         }
       }
-      await renderer.call(this, lastPathEntry, data, parentElement);
+      await renderer.call(this, lastPathEntry, data, parentElement, true);
     } else if (usePropertiesContainer == true) {
       const pathMinusLastEntry = this.path.filter((item, index) => index < this.path.length - 1);
       let properties = this.querySelector(`details[data-path="${pathMinusLastEntry.join(".")}.properties"]`);
@@ -224,27 +224,33 @@ var RecordTreeElement = class extends HTMLElement {
     }
     details.setAttribute("data-path", path);
     const summary = document.createElement("summary");
+    summary.classList.add("summary");
+    summary.part.add("summary", "collection", ...classes ?? []);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = name;
     nameSpan.classList.add("name");
-    nameSpan.part.add("name");
+    nameSpan.part.add("name", "collection", ...classes ?? []);
     summary.append(nameSpan);
     if (preventRemoveButton != false) {
       const removeButton = document.createElement("button");
       removeButton.innerHTML = ICON_CANCEL_CROSS;
       removeButton.title = "Remove";
-      removeButton.classList.add("remove");
-      removeButton.part.add("remove");
+      removeButton.classList.add("button", "icon-button", "remove");
+      removeButton.part.add("button", "icon-button", "remove");
       summary.append(removeButton);
     }
     details.append(summary);
     return details;
   }
-  async renderArrayAsCollection(key, data, parentElement) {
+  async renderArrayAsCollection(key, data, parentElement, isTop = false) {
     const name = isNaN(parseInt(key)) ? key : `[${key}]`;
     const details = this.createCollectionDetailsElement(name, this.path.join("."), ["collection"]);
     if (this.path.length == 0) {
       details.setAttribute("open", "");
+    }
+    if (isTop == true) {
+      details.classList.add("top");
+      details.part.add("top");
     }
     parentElement.append(details);
     for (let i = 0; i < data.length; i++) {
@@ -253,11 +259,15 @@ var RecordTreeElement = class extends HTMLElement {
       this.path.pop();
     }
   }
-  async renderObjectAsCollection(key, data, parentElement) {
+  async renderObjectAsCollection(key, data, parentElement, isTop = false) {
     const name = isNaN(parseInt(key)) ? key : data.name != null && data.name.trim() != "" ? data.name : data.description != null && data.description.trim() != "" ? data.description : data.key != null && data.key.trim() != "" ? data.key : data.id != null && data.id.toString().trim() != "" ? data.id : `[${key}]`;
     const details = this.createCollectionDetailsElement(name, this.path.join("."), ["collection"]);
     if (this.path.length == 0) {
       details.setAttribute("open", "");
+    }
+    if (isTop == true) {
+      details.classList.add("top");
+      details.part.add("top");
     }
     parentElement.append(details);
     for (const [key2, value] of Object.entries(data)) {
@@ -295,8 +305,8 @@ var RecordTreeElement = class extends HTMLElement {
     const removeButton = document.createElement("button");
     removeButton.innerHTML = ICON_CANCEL_CROSS;
     removeButton.title = "Remove";
-    removeButton.classList.add("remove");
-    removeButton.part.add("remove");
+    removeButton.classList.add("button", "icon-button", "remove");
+    removeButton.part.add("button", "icon-button", "remove");
     property.append(name, delimiter, valueSpan, removeButton);
     property.title = `${name.getAttribute("title")}: ${valueSpan.getAttribute("title")}`;
     parentElement.append(property);
@@ -308,7 +318,7 @@ var RecordTreeElement = class extends HTMLElement {
   createPropertyName(title, value, parentElement) {
     const name = document.createElement("span");
     name.classList.add("name");
-    name.part.add("name");
+    name.part.add("name", "property");
     name.textContent = title;
     name.title = title;
     return name;
@@ -316,13 +326,17 @@ var RecordTreeElement = class extends HTMLElement {
   createPropertyValue(title, value, parentElement) {
     const valueSpan = document.createElement("span");
     valueSpan.classList.add("value");
-    valueSpan.part.add("value");
+    valueSpan.part.add("value", "value");
     if (value === void 0) {
       const undefinedTextValue = this.getAttribute("undefined-value") ?? "[ undefined ]";
       value = undefinedTextValue;
+      valueSpan.classList.add("undefined");
+      valueSpan.part.add("undefined");
     } else if (value === null) {
       const nullTextValue = this.getAttribute("null-value") ?? "[ null ]";
       value = nullTextValue;
+      valueSpan.classList.add("null");
+      valueSpan.part.add("null");
     } else {
       value = value.toString();
     }
@@ -337,6 +351,7 @@ var RecordTreeElement = class extends HTMLElement {
   async renderCollectionAsKeyValuePairs(key, items, parentElement) {
     const propertiesDetails = this.createCollectionDetailsElement(key, this.path.join("."), ["collection", "key-value-pairs"]);
     const propertiesList = document.createElement("ul");
+    propertiesList.part.add("properties-list");
     propertiesDetails.append(propertiesList);
     for (let i = 0; i < items.length; i++) {
       this.path.push(items[i].key);
@@ -348,6 +363,7 @@ var RecordTreeElement = class extends HTMLElement {
   async renderCollectionAsValues(key, items, parentElement) {
     const propertiesDetails = this.createCollectionDetailsElement(key, this.path.join("."), ["collection", "values"]);
     const propertiesList = document.createElement("ul");
+    propertiesList.part.add("properties-list");
     propertiesDetails.append(propertiesList);
     for (let i = 0; i < items.length; i++) {
       this.path.push(items[i]);
@@ -369,8 +385,8 @@ var RecordTreeElement = class extends HTMLElement {
     const removeButton = document.createElement("button");
     removeButton.innerHTML = ICON_CANCEL_CROSS;
     removeButton.title = "Remove";
-    removeButton.classList.add("remove");
-    removeButton.part.add("remove");
+    removeButton.classList.add("button", "icon-button", "remove");
+    removeButton.part.add("button", "icon-button", "remove");
     property.append(valueSpan, removeButton);
     parentElement.append(property);
   }
@@ -385,8 +401,8 @@ var RecordTreeElement = class extends HTMLElement {
         if (textContent == null || textContent.trim() == "") {
           textContent = i.toString();
         }
-        $summary.classList.add("property");
-        $summary.part.add("property");
+        $summary.classList.add("summary");
+        $summary.part.add("summary", "property");
         $summary.textContent = textContent.substring(0, Math.min(textContent.length, 20));
         $details.classList.add("subrecord");
         $details.part.add("subrecord");
@@ -400,8 +416,8 @@ var RecordTreeElement = class extends HTMLElement {
         if (Array.isArray(value) || Object.prototype.toString.call(value) === "[object Object]") {
           const $details = document.createElement("details");
           const $summary = document.createElement("summary");
-          $summary.classList.add("property");
-          $summary.part.add("property");
+          $summary.classList.add("summary");
+          $summary.part.add("summary", "property");
           $summary.textContent = key;
           $details.classList.add("subrecord");
           $details.part.add("subrecord");
@@ -421,11 +437,11 @@ var RecordTreeElement = class extends HTMLElement {
           $property.part.add("property");
           const $name = document.createElement("span");
           $name.classList.add("name");
-          $name.part.add("name");
+          $name.part.add("name", "property");
           $name.textContent = key;
           const $value = document.createElement("span");
           $value.classList.add("value");
-          $value.part.add("value");
+          $value.part.add("value", "property");
           let textContent = value.toString();
           $value.textContent = textContent.substring(0, Math.min(textContent.length, 20));
           $property.append($name, $value);

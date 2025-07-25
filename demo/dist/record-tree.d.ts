@@ -18,8 +18,8 @@ declare class RecordTreeElement extends HTMLElement {
     refresh(): void;
     getUpdatedData<T>(): T;
     createCollectionDetailsElement(name: string, path: string, classes?: string[], preventRemoveButton?: boolean): HTMLDetailsElement;
-    renderArrayAsCollection(key: string, data: any, parentElement: HTMLElement): Promise<void>;
-    renderObjectAsCollection(key: string, data: any, parentElement: HTMLElement): Promise<void>;
+    renderArrayAsCollection(key: string, data: any, parentElement: HTMLElement, isTop?: boolean): Promise<void>;
+    renderObjectAsCollection(key: string, data: any, parentElement: HTMLElement, isTop?: boolean): Promise<void>;
     renderObjectProperty(title: string, value: any, parentElement: HTMLElement): Promise<void>;
     createPropertyName(title: string, value: any, parentElement: HTMLElement): HTMLSpanElement;
     createPropertyValue(title: string, value: any, parentElement: HTMLElement): HTMLSpanElement;

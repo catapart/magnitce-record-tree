@@ -28,12 +28,12 @@ export class RecordTreeElement extends HTMLElement
     #customCollectionRenderers: Array<
     { 
         condition: (key: string, data: any, parentElement: HTMLElement) => boolean|Promise<boolean>,
-        renderer: (key: string, data: any, parentElement: HTMLElement) => void|Promise<void> 
+        renderer: (key: string, data: any, parentElement: HTMLElement, isTop?:boolean) => void|Promise<void> 
     }> = new Array();
     #customObjectRenderers: Array<
     { 
         condition: (key: string, data: any, parentElement: HTMLElement) => boolean|Promise<boolean>,
-        renderer: (key: string, data: any, parentElement: HTMLElement) => void|Promise<void> 
+        renderer: (key: string, data: any, parentElement: HTMLElement, isTop?:boolean) => void|Promise<void> 
     }> = new Array();
     #customPropertyRenderers: Array<
     { 
@@ -234,7 +234,7 @@ export class RecordTreeElement extends HTMLElement
         if(Array.isArray(data))
         {
             // render property
-            let renderer:(title: string, value: any, parentElement: HTMLElement) => void|Promise<void>  = this.renderArrayAsCollection;
+            let renderer:(title: string, value: any, parentElement: HTMLElement, isTop?:boolean) => void|Promise<void>  = this.renderArrayAsCollection;
             for(let i = 0; i < this.#customCollectionRenderers.length; i++)
             {
                 if(this.#customCollectionRenderers[i].condition(lastPathEntry, data, parentElement) == true)
@@ -244,7 +244,7 @@ export class RecordTreeElement extends HTMLElement
                 }
             }
             
-            await renderer.call(this, lastPathEntry, data, parentElement);
+            await renderer.call(this, lastPathEntry, data, parentElement, true);
         }
         else if(Object.prototype.toString.call(data) === "[object Object]")
         {
@@ -252,7 +252,7 @@ export class RecordTreeElement extends HTMLElement
             data = this.draftObject(data);
 
             // render property
-            let renderer:(title: string, value: any, parentElement: HTMLElement) => void|Promise<void>  = this.renderObjectAsCollection;
+            let renderer:(title: string, value: any, parentElement: HTMLElement, isTop?:boolean) => void|Promise<void>  = this.renderObjectAsCollection;
             for(let i = 0; i < this.#customObjectRenderers.length; i++)
             {
                 if(this.#customObjectRenderers[i].condition(lastPathEntry, data, parentElement) == true)
@@ -262,7 +262,7 @@ export class RecordTreeElement extends HTMLElement
                 }
             }
             
-            await renderer.call(this, lastPathEntry, data, parentElement);            
+            await renderer.call(this, lastPathEntry, data, parentElement, true);            
         }
         else if(usePropertiesContainer == true)
         {
@@ -410,12 +410,12 @@ export class RecordTreeElement extends HTMLElement
         details.setAttribute('data-path', path);
 
         const summary = document.createElement('summary');
-        summary.classList.add('summary', 'collection', ...classes ?? []);
+        summary.classList.add('summary');
         summary.part.add('summary', 'collection', ...classes ?? []);
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         nameSpan.classList.add('name');
-        nameSpan.part.add('name');
+        nameSpan.part.add('name', 'collection', ...classes ?? []);
 
         summary.append(nameSpan);
 
@@ -434,7 +434,7 @@ export class RecordTreeElement extends HTMLElement
         return details;
     }
 
-    async renderArrayAsCollection(key: string, data: any, parentElement: HTMLElement)
+    async renderArrayAsCollection(key: string, data: any, parentElement: HTMLElement, isTop: boolean = false)
     {
         const name = (isNaN(parseInt(key))) ? key : `[${key}]`;
 
@@ -442,6 +442,12 @@ export class RecordTreeElement extends HTMLElement
         if(this.path.length == 0)
         {
             details.setAttribute('open', '');
+        }
+
+        if(isTop == true)
+        {
+            details.classList.add('top');
+            details.part.add('top');
         }
 
         parentElement.append(details);
@@ -454,7 +460,7 @@ export class RecordTreeElement extends HTMLElement
             this.path.pop();
         }
     }
-    async renderObjectAsCollection(key: string, data: any, parentElement: HTMLElement)
+    async renderObjectAsCollection(key: string, data: any, parentElement: HTMLElement, isTop: boolean = false)
     {
         const name = (isNaN(parseInt(key))) ? key 
         : (data.name != null && data.name.trim() != "")
@@ -470,6 +476,12 @@ export class RecordTreeElement extends HTMLElement
         if(this.path.length == 0)
         {
             details.setAttribute('open', '');
+        }
+
+        if(isTop == true)
+        {
+            details.classList.add('top');
+            details.part.add('top');
         }
 
         parentElement.append(details);
@@ -542,7 +554,7 @@ export class RecordTreeElement extends HTMLElement
     {
         const name = document.createElement('span');
         name.classList.add('name');
-        name.part.add('name');
+        name.part.add('name', 'property');
         name.textContent = title;
         name.title = title;
         return name;
@@ -551,17 +563,21 @@ export class RecordTreeElement extends HTMLElement
     {
         const valueSpan = document.createElement('span');
         valueSpan.classList.add('value');
-        valueSpan.part.add('value');
+        valueSpan.part.add('value', 'value');
 
         if(value === undefined)
         {
             const undefinedTextValue = this.getAttribute('undefined-value') ??  "[ undefined ]";
             value = undefinedTextValue;
+            valueSpan.classList.add('undefined');
+            valueSpan.part.add('undefined');
         }
         else if(value === null)
         {
             const nullTextValue = this.getAttribute('null-value') ??  "[ null ]";
             value = nullTextValue;
+            valueSpan.classList.add('null');
+            valueSpan.part.add('null');
         }
         else
         {
@@ -584,6 +600,7 @@ export class RecordTreeElement extends HTMLElement
         const propertiesDetails = this.createCollectionDetailsElement(key, this.path.join('.'), ['collection', 'key-value-pairs']);
 
         const propertiesList = document.createElement('ul');
+        propertiesList.part.add('properties-list');
         propertiesDetails.append(propertiesList);
 
         for(let i = 0; i < items.length; i++)
@@ -600,6 +617,7 @@ export class RecordTreeElement extends HTMLElement
         const propertiesDetails = this.createCollectionDetailsElement(key, this.path.join('.'), ['collection', 'values']);
 
         const propertiesList = document.createElement('ul');
+        propertiesList.part.add('properties-list');
         propertiesDetails.append(propertiesList);
 
         for(let i = 0; i < items.length; i++)
@@ -659,7 +677,7 @@ export class RecordTreeElement extends HTMLElement
 
                 let textContent = value.name ?? value.description ?? value.key;
                 if(textContent == null || textContent.trim() == "") { textContent = i.toString(); }
-                $summary.classList.add('summary', 'property');
+                $summary.classList.add('summary');
                 $summary.part.add('summary', 'property');
                 $summary.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
@@ -684,7 +702,7 @@ export class RecordTreeElement extends HTMLElement
                     const $summary = document.createElement('summary');
     
                     // let textContext = key;
-                    $summary.classList.add('summary', 'property');
+                    $summary.classList.add('summary');
                     $summary.part.add('summary', 'property');
                     $summary.textContent = key;
 
@@ -712,13 +730,13 @@ export class RecordTreeElement extends HTMLElement
                     $property.part.add('property');
 
                     const $name = document.createElement('span');
-                    $name.classList.add('name', 'property');
+                    $name.classList.add('name');
                     $name.part.add('name', 'property');
                     $name.textContent = key;
 
                     const $value = document.createElement('span');
                     $value.classList.add('value');
-                    $value.part.add('value');
+                    $value.part.add('value', 'property');
                     let textContent = (value as any).toString();
                     $value.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
