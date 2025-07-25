@@ -410,6 +410,8 @@ export class RecordTreeElement extends HTMLElement
         details.setAttribute('data-path', path);
 
         const summary = document.createElement('summary');
+        summary.classList.add('summary', 'collection-summary');
+        summary.part.add('summary', 'collection-summary');
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         nameSpan.classList.add('name');
@@ -657,8 +659,8 @@ export class RecordTreeElement extends HTMLElement
 
                 let textContent = value.name ?? value.description ?? value.key;
                 if(textContent == null || textContent.trim() == "") { textContent = i.toString(); }
-                $summary.classList.add('property');
-                $summary.part.add('property');
+                $summary.classList.add('summary', 'property');
+                $summary.part.add('summary', 'property');
                 $summary.textContent = textContent.substring(0, Math.min(textContent.length, 20));
 
                 $details.classList.add('subrecord');
