@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.13
+
+### Patch Changes
+
+- 3ba788e: updated property name and value parts
+
 ## 0.0.12
 
 ### Patch Changes
