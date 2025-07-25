@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.8
+
+### Patch Changes
+
+- dd1a100: added additional classes and parts
+
 ## 0.0.7
 
 ### Patch Changes
