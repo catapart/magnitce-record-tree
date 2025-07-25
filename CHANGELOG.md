@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.7
+
+### Patch Changes
+
+- 75c9a1b: added summary parts and classes
+
 ## 0.0.6
 
 ### Patch Changes
