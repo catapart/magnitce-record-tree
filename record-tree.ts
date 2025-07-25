@@ -404,8 +404,8 @@ export class RecordTreeElement extends HTMLElement
         const details = document.createElement('details');
         if(classes != null) 
         {
-            details.classList.add(...classes);
-            details.part.add(...classes);
+            details.classList.add('details', ...classes);
+            details.part.add('details', ...classes);
         }
         details.setAttribute('data-path', path);
 
