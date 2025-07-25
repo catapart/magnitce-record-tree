@@ -1,5 +1,12 @@
 # @magnit-ce/record-tree
 
+## 0.0.12
+
+### Patch Changes
+
+- cfa1386: added parts to icons
+- dad528a: added top part to summaries
+
 ## 0.0.11
 
 ### Patch Changes
