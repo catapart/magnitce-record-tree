@@ -276,6 +276,8 @@ export class RecordTreeElement extends HTMLElement
                 properties = this.createCollectionDetailsElement('Properties', `${pathMinusLastEntry.join('.')}.properties`, ['collection', 'properties'], false);
                 properties.toggleAttribute('open', true);
                 propertyList = document.createElement('ul');
+                propertyList.classList.add('properties-list');
+                propertyList.part.add('properties-list');
                 properties.append(propertyList);
 
                 parentElement.append(properties);
@@ -721,6 +723,8 @@ export class RecordTreeElement extends HTMLElement
                         if(propertiesList == null)
                         {
                             propertiesList = document.createElement('ul');
+                            propertiesList.classList.add('properties-list');
+                            propertiesList.part.add('properties-list');
                             parent.appendChild(propertiesList);
                         }
                     }
