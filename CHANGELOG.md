@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.14
+
+### Patch Changes
+
+- 6980260: updated icon part names
+
 ## 0.0.13
 
 ### Patch Changes
