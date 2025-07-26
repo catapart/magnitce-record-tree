@@ -101,6 +101,9 @@ export class RecordTreeElement extends HTMLElement
                 }
                 removeButton.innerHTML = ICON_CANCEL_CROSS;
                 removeButton.title = 'Remove';
+                removeButton.classList.remove('undo');
+                removeButton.part.remove('undo');
+                
                 this.dispatchEvent(new CustomEvent('restore', { detail: { path: parentToRemove.dataset.path } }));
             }
             else
@@ -115,6 +118,7 @@ export class RecordTreeElement extends HTMLElement
                 removeButton.title = 'Undo';
                 removeButton.classList.add('undo');
                 removeButton.part.add('undo');
+
                 this.dispatchEvent(new CustomEvent('remove', { detail: { path: parentToRemove.dataset.path } }));
             }
         }

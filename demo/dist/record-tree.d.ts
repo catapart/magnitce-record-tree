@@ -17,7 +17,7 @@ declare class RecordTreeElement extends HTMLElement {
     clear(): void;
     refresh(): void;
     getUpdatedData<T>(): T;
-    createCollectionDetailsElement(name: string, path: string, classes?: string[], preventRemoveButton?: boolean): HTMLDetailsElement;
+    createCollectionDetailsElement(name: string, path: string, classes?: string[], preventRemoveButton?: boolean, isTop?: boolean): HTMLDetailsElement;
     renderArrayAsCollection(key: string, data: any, parentElement: HTMLElement, isTop?: boolean): Promise<void>;
     renderObjectAsCollection(key: string, data: any, parentElement: HTMLElement, isTop?: boolean): Promise<void>;
     renderObjectProperty(title: string, value: any, parentElement: HTMLElement): Promise<void>;
