@@ -1,5 +1,11 @@
 # @magnit-ce/record-tree
 
+## 0.0.15
+
+### Patch Changes
+
+- ba995ea: implemented removing undo class and part from remove button after undo
+
 ## 0.0.14
 
 ### Patch Changes
