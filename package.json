@@ -2,41 +2,45 @@
   "name": "@magnit-ce/record-tree",
   "version": "0.0.15",
   "description": "A custom html element that renders javascript objects as a collapsible tree-like structure of nested detail elements.",
-  "type": "module",
-  "main": "dist/record-tree.js",
-  "module": "dist/record-tree.mjs",
+  "main": "dist/record-tree.umd.js",
+  "module": "dist/record-tree.js",
   "types": "dist/record-tree.d.ts",
+  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup record-tree.ts --format cjs,esm --dts --clean",
-    "copyToDemo": "node -e \"const fs = require('fs'); fs.cpSync('dist', 'demo/dist', {recursive: true});\"",
-    "minify": "tsup record-tree.ts --format esm --config ./tsup.config.min.ts --outDir ./demo/dist --minify",
-    "lint": "tsup record-tree.ts --format esm --tsconfig ./tsconfig.lint.json",
-    "package": "npm run build && npm run minify && npm run copyToDemo",
-    "release": "npm run package && changeset publish"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "build-tests": "vite build --config vite.config.tests.ts",
+    "changeset": "npx @changesets/cli",
+    "release": "npm run build && npx @changesets/cli publish"
   },
   "keywords": [
     "custom",
     "element",
     "html",
+    "browser",
     "json",
     "object",
     "tree",
     "visualizer"
   ],
+  "devDependencies": {
+    "@changesets/cli": "^2.27.7",
+    "@magnit-ce/test-runner": "^0.0.8",
+    "@rollup/plugin-terser": "^1.0.0",
+    "changesets": "^1.0.2",
+    "glob": "^13.0.0",
+    "typescript": "^5.5.3",
+    "vite": "^8.0.0",
+    "vite-plugin-dts": "^4.5.4"
+  },
   "author": "catapart",
   "license": "CC0-1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/catapart/magnitce-record-tree"
-  },
-  "devDependencies": {
-    "@changesets/cli": "^2.27.7",
-    "minify": "^11.4.0",
-    "terser": "^5.31.3",
-    "tsup": "^8.2.0",
-    "typescript": "^5.5.3"
   }
 }

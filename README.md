@@ -1,187 +1,128 @@
-# `<record-tree>` Element
-A custom `HTMLElement` that renders javascript objects as a collapsible tree-like structure of nested detail elements.
+# Warning - Non-production package
+> [!WARNING]  
+> This project is being prepared for production, but is not ready to be used as a dependency for anything. There will be breaking changes and unrecoverable states. Do not use until this warning has been removed.
+> When the library reaches the `1.0.0` designation, that will be a production package. From that point, you can use the major version number (`1` in `1.0.0`) to recognize when breaking changes are introduced.
 
-Package size: ~15kb minified, ~24kb verbose.
-
-## Quick Reference
-```html
-<record-tree remove-attribute></record-tree>
-<script type="module" src="/path/to/record-tree[.min].js"></script>
-<script>
-    document.querySelector('record-tree').setData({
-        myText: 'Text',
-        myNumber: 42,
-        myArray: ["A", "B", "C"],
-        myObject: {
-            mySubtext: 'text'
-        }
-    });
-    const updatedObject = document.querySelector('record-tree').getUpdatedaData();
-</script>
-```
-
-## Demos
-https://catapart.github.io/magnitce-record-tree/demo/
-
-## Support
-- Firefox
-- Chrome
-- Edge
-- <s>Safari</s> (Has not been tested; should be supported, based on custom element support)
-
-## Getting Started
- 1. [Install/Reference the library](#referenceinstall)
-
-### Reference/Install
-#### HTML Import (not required for vanilla js/ts; alternative to import statement)
-```html
-<script type="module" src="/path/to/record-tree[.min].js"></script>
-```
-#### npm
-```cmd
-npm install @magnit-ce/record-tree
-```
-
-### Import
-#### Vanilla js/ts
-```js
-import "/path/to/record-tree[.min].js"; // if you didn't reference from a <script>, reference with an import like this
-
-import { RecordTreeElement } from "/path/to/record-tree[.min].js";
-```
-#### npm
-```js
-import "@magnit-ce/record-tree"; // if you didn't reference from a <script>, reference with an import like this
-
-import { RecordTreeElement } from "@magnit-ce/record-tree";
-```
-
----
----
----
+# The `record-tree` Custom Element
 
 ## Overview
-The `<record-tree>` element is an interactive visualizer for object data in HTML. Providing the element with any arbitrary javascript object will render that object in the DOM as a set of nested `<detail>` elements with each level representing a depth of the provided object.
+A custom html element that renders javascript objects as a collapsible tree-like structure of nested detail elements.
 
-The element allows for manipulating the object properties by having a "remove" button that optionally removes the object from the DOM, or adds a configurable "remove" class to the removed property.
+|||||
+|-|-|-|-|
+|Package size, **verbose**:|~24kb|Package size, **minified**:|~15kb|
 
-In addition to rendering and editing, the `<record-tree>` element provides functionality for collecting the data back into a javascript object, while maintaining any of the property removals that were invoked.
 
-These three features, together, allow the `<record-tree>` element to facilitate common import and export functionality by rendering a description of the data to import or export, allowing users to edit the data to be imported/exported, and re-composing that edited data object into a form recognized by the consuming process.
 
-## Objects
-The `<record-tree>` element accepts any arbitrary object to render, and returns all properties on an anonymous object, nested identically to the provided data.
+## Quick Start
+```html
 
-### Setting Data
-To render an object with the `<record-tree>` element, use the `setData()` function with a parameter of the data object to render. The element will render properties for all kinds of objects, including complex ones that have getter properties.
+```
 
-### Getting Data
-To retrieve data from the `<record-tree>` element, use the `getUpdatedData()` function. The element will return a composed object that will be an anonymous type, rather than a typed object, even if a typed object was provided. As the data can change, the `<record-tree>` element cannot be certain that the resulting object will still contain all of the data required by that type. So the data is returned as an anonymous object, with the expectation that the implementer will convert the data back into the actual object type that is preferred.
+## Links
+### Demo:
+https://catapart.github.io/magnitce-record-tree
+### Documentation:
+https://catapart.github.io/magnitce-record-tree/docs
+### Automated Testing:
+https://catapart.github.io/magnitce-record-tree/tests.html
 
-The returned object will still be nested in keeping with the objected that was provided in the `setData()` function. This should allow simple casting, in the cases where that is available, and expected object traversal, in cases where the implementer will need to consume the returned object.
+## Repo Notes
+This section provides instructions for how to use the repo to develop the library.
 
-### Editing Data
-The `<record-tree>` element allows modification to the returned object by way of DOM manipulation. When property elements are removed from the `<record-tree>` element, or given a "removed" class, the `<record-tree>` element no longer recognizes those properties as available for composing in an object.
+### Installation
+Install the repo using a package manager:
+```cmd
+npm install
+```
 
-To facilitate this editability, the `<record-tree>` element provides a "remove" button on each property element. This `<button>` can easily be removed by setting its `display` style to `none`, if this functionality is not a supported use case.
+### Configuration
+#### `tsconfig.json`
+The `tsconfig.json` file is generated by the `vite` dependency and has not been modified by this library. It uses strict linting and defaults to `es` modules, rather than `commonjs` modules. For more information about each of the `tsconfig.json` options, see the [tsconfig documentation](https://www.typescriptlang.org/tsconfig/).
+#### `vite.config`
+The `vite.config` file sets defaults options for the dev, build, and release processes, which allows the code to be packaged as a library (rather than a website) and defines custom inputs and outputs to exclude tests and create both `es` and `umd` modules. It also includes settings that allow for multiple file outputs with well-defined names and selective minification. For more information about configuring `vite`, see the [vite config documentation](https://vite.dev/config/).
+#### `vite.config.tests.ts`
+This specialized `vite.config` file defines custom inputs and outputs that include tests and then are packaged into the `test-runner` directory, rather than built to the `dist` directory.
 
-The "remove" `<button>` allows users to indicate properties should be removed from the object that was provided in the `setData()` function. The property values, themselves, cannot be edited (by default), but the properties may be removed to support common use-cases for importing and exporting data.
+### Development
+The `src` directory has a `dev` subdirectory that is intended for development. Developers can link to code-test files written in typescript, which allows for full type support while writing tests during development.
 
-## Customized Rendering
-The `<record-tree>` element supports most data types with default functionality, but it also allows custom handlers to render each property for uses cases that are out of scope for generalized property rendering - like showing a preview of a image data, or adding app-specific layout elements.
+Place development tests in the `tests` subdirectory of the `dev` directory. Use the suffix `.tests` to denote that a typescript file is a code-tests file. (*example: `interface.tests.ts`*)
 
-These custom rendering functions are managed by providing the conditions for when they are used - in case this custom rendering should only be used on some properties of that type - and then providing the function that will generate the element displaying the property's data.
+Once tests have been added, the `build-tests` script can be used to compile the typescript tests into javascript tests that will be available for use in any `<code-tests>` or `<test-runner>` elements - including on the `tests.html` page.
 
-### Custom Property Rendering
-|Function|Description|
-|-|-|
-|`addCustomCollectionRenderer()`|Add a custom renderer for array-like properties.|
-|`addCustomObjectRenderer()`|Add a custom renderer for complex javascript objects.|
-|`addCustomPropertyRenderer()`|Add a custom renderer for "atomic"-style types like `string`, `number`, `boolean`, etc.|
+### Test Page
+The test page (`tests.html`) in the root directory can be used to demonstrate passing tests to users. 
 
-#### Function Parameters
-Each of these functions takes two parameters: `condition` and `generator`.
+Tests can be created in the `src/dev/tests` directory and developed using the dev page. When all tests are passing, use the `build-tests` script to transpile the `.ts` test files into `.js` test files that are deployed to the `public/tests` directory, which can be referenced by the `tests.html` page.
 
-The `condition` parameter is a function that determines whether or not any specific property should use the `generator`. If the `condition` function returns `true`, the function provided as the `generator` parameter will be called on the matching property, instead of the default functionality. This function may be asynchronous to determine the result.
+The test page will also expect a reference to the library file, which won't exist until the `build` script has been run. If running the project causes errors, check the test page to either remove the script tags requesting the library file, or build the library to provide the test page with its requested source file.
 
-The `generator` parameter is a function that ouputs the custom HTML content that should be rendered for the property that has matched the `condition` parameter. The `generator` function expects a return of a single `HTMLElement`. This function may be asynchronous to generate the element.
+### Scripts
+#### `dev`
+Use `vite` to begin a server with Hot Module Replacement, which will automatically reload any time a change in a source file is saved.
+#### `build`
+Use `vite` to transpile the source code into code chunks or library files. Files are output into the `dist` directory by default.
+#### `preview`
+Use `vite` to serve the `dist` directory. Useful for non-library projects, where the `dist` directory will contain an `index.html` file, or other browse-able entry point.
+#### `build-tests`
+Use `vite` to transpile all files with a `.tests.[ts|js|tsx|jsx]` extension into the `public/tests` subdirectory. Creates javascript files that can be served to the `<test-runner>` and `<code-tests>` components, which are included in the `public/libs` subdirectory.
+#### `changeset`
+Runs the `npx @changesets/cli` command to create a new changeset which will prepare the library to be published.
+#### `release`
+Use `vite` to transpile the source code and then use `changesets` to begin the publication procedure for the repo environment (github or gitlab).  
+If this script is run during CI/CD for the `main` branch, the library is published to [npm](https://www.npmjs.com/). If it is run during CI/CD for any other branch, the library is linted and compiled. It is expected that this command will *only* be used by a CI/CD pipeline, and **never** by a library dev. Running the `release` script on a local codebase is not supported.
 
-#### Condition and Generator Parameters
-Both parameter functions - `condition` and `generator` - will be provided the following parameters:
-|Parameter|Type|Description|
-|-|-|-|
-|`key`|`string`|The name of the target property.|
-|`data`|`unknown`|The value of the target property.|
-|`parentElement`|`HTMLElement`|The parent element that this property's element will be appended to. Can be used to determine nesting level within the object.|
 
-### Custom Property Child Element Rendering
-For convenience, the `<record-tree>` element provides the following two functions as a way to change how property names are rendered within a property element or how property values are rendered within a property element. These functions allow for generalized or targeted changes to how properties are rendered, without considering the construction and layout of the entire property element.
+### Publishing
 
-|Function|Description|
-|-|-|
-|`addCustomPropertyNameGenerator()`|Adds a custom handler for rendering the element where the property's name is rendered.|
-|`addCustomPropertyValueGenerator()`|Adds a custom handler for rendering the element where the property's value is rendered.|
+#### Releasing with `changesets`
+Publishing is handled using the `changesets` library which starts the process by requiring a manual entry into a running version log. Once you have defined a set of changes as a version change, the automated processes can prepare the library to be published on to `npm`. When the automation has prepared the release, it will create a pull request from a new branch containing the release package. The publishing developer will be required to merge that branch into main, using the pull request, in order to publish a new version.
 
-#### Condition and Generator Parameters
-Both parameter functions - `condition` and `generator` - will be provided the following parameters:
-|Parameter|Type|Description|
-|-|-|-|
-|`title`|`string`|The name of the target property.|
-|`value`|`string`|The value of the target property, processed into the string value that will be used as `textContent` in the DOM.|
-|`parentElement`|`HTMLElement`|The parent element that this property's element will be appended to. Can be used to determine nesting level within the object.|
+The step-by-step process is outline below for both Github and Gitlab:
 
-## Additional Functions
-|Function|Description|
-|-|-|
-|`clear()`|Clears the data object from the `<record-tree>` element, and removes all child elements.|
-|`refresh()`|Re-renders the last data object that was provided to the `setData()` function.|
-|`getInitialData()`|Gets an unmodified version of the last data object that was provided to the `setData()` function.|
+##### Github Steps
+1. **Run `changeset` command**: `npm run changeset` | `bun run changeset` | `pnpm changesets` | `yarn changesets` | `npx @changesets/cli`
+1. **Log version info**: Add a message that describes the changes in this version
+1. **Check in**: Push changes to repo
+1. **Merge**: Merge branch into `main`
+1.  **Merge Automation Branch**: Await repo automation's creation of a new pull request from a newly created branch. Accept the pull request, merging the branch into main.
 
-## Attributes
-|Attribute Name|Description|
-|-|-|
-|`removed-class`|Providing this attribute will prevent the `<record-tree>` element from removing DOM elements and will, instead, mark the attributes that are to be removed with a class. By default, this class will be `removed`, but it can be configured by giving the `removed-class` attribute a value. For example, setting the `removed-class` attribute to `delete` will give every removed property a `delete` class, instead of the `removed` class.|
-|`parent-name`|Sets the text of the top-level details summary. If this attribute is undefined, the top-level details summary will use "Data" for the heading.|
-|`undefined-value`|Sets the text that will be displayed when a value on an object is `undefined`.|
-|`null-value`|Sets the text that will be displayed when a value on an object is `null`.|
-|`blank-value`|Sets the text that will be displayed when a value on an object is "", after having been converted to a string and trimmed.|
+After automation completes, the new version will be published to `NPM`.
 
-## Undo
-Whenever the `<record-tree>` element uses the `removed-class` attribute to change the default functionality from removing a property element from the DOM, to adding a specific class to that property element instead, it also changes the functionality of the `<button>` present in each property element. When an element has the "remove" class, its `<button>` functionality will be changed into an `undo` action which will revert the property from being "removed" into being present in the final data object again.
+##### Gitlab Steps
+1. **Run `changeset` command**: `npm run changeset` | `bun run changeset` | `pnpm changesets` | `yarn changesets` | `npx @changesets/cli`
+1. **Log version info**: Add a message that describes the changes in this version
+1. **Check in**: Push changes to repo
+1. **Merge**: Merge branch into `main`
+1.  **Merge Automation Branch**: Await repo automation's creation of a new merge request from a newly created branch. Merge the merge request into main.
 
-The intention of this functionality is to allow users to indicate they would like a property removed, while still being able to undo that indication, in case of a mistake.
+After automation completes, the new version will be published to `NPM`.
 
-## Events
-The `<record-tree>` element dispatches two `CustomEvent`s, but both provide the same `detail` content: a single property called `path` which is a period-delimited string that represents the nested path to the updating property. If a property on the top level of an object is being removed, its `path` will simply be the property name. But if a property exists on a nested object, rather than the top-level object, it may look like this: `topLevel.objectProperty.thisProperty`.
+### Dependencies
 
-Using the event's `path` data, the property can be referenced on the original object during the event handler.
+#### Library Dependencies
 
-The following events are dispatched by the `<record-tree>` element:
-|Event Name|Description
-|-|-|
-|`remove`|Dispatched when a removal occurs. Dispatches when the element is removed or given a "removed" class.|
-|`restore`|Dispatched when a property is restored from having been removed. Only relevant if the `removed-class` attribute is provided.|
 
-## Styling
-The `<record-tree>` element can be styled with CSS, normally. Each of it's child elements are given classes that can be used for styling. The following table describes the classes used by the `<record-tree>` element:
-|Class Name|Description
-|-|-|
-|`name`|An element that displays the property name for the target property.|
-|`value`|An element that displays a string representation of the target property's value.|
-|`property`|The container for the name and value elements.|
-|`removed`|This class is applied to the property element whenever that property has been removed, while the `<record-tree>` element has the `removed-class` attribute.|
-|`remove`|The `<button>` that toggles the "remove" class. The `remove` class is applied whenever the "remove" class is **not** present on the property element.|
-|`undo`|The `<button>` that toggles the "remove" class. The `undo` class is applied whenever the "remove" class is present on the property element.|
-|`delimiter`|An element that separates the property name element from the property value element. Default text content: `:`|
-|`icon`|An icon displayed on the `<button>` element. Class exists on both the `remove` and `undo` buttons.|
-|`cancel-cross`|This class is in the classList of the icon element that is used when a property has **not** been removed.|
-|`undo-arrow`|This class is in the classList of the icon element that is used when a property has been removed.|
+#### Development Dependencies
 
-The icons used by the element also make use of css properties (variables) to facilitate color customization. The following css properties can be used to style the icon elements:
-|CSS Property Name|Description
-|-|-|
-|`--icon-primary-color`|The color that will be used as the fill color for the icons.|
-|`--icon-secondary-color`|The color that will be used as the outline color for the icons.|
+##### [`typescript`](https://www.typescriptlang.org/)
+Typescript provides type checking at dev time which adds compile-time safety to the codebase for a wide range of issues. For more information on Typescript, visit its [website](https://www.typescriptlang.org/).
 
-## License
-This library is in the public domain. You do not need permission, nor do you need to provide attribution, in order to use, modify, reproduce, publish, or sell it or any works using it or derived from it.
+##### [`@changesets/cli`](https://github.com/changesets/changesets)
+The `changesets` library uses a strict process to handle versioning and publishing which makes the update and deployment of any library to NPM a structured and repeatable series of steps. Versioning is managed by a command-line utility which enforces release notes and semantic versions. Publishing is handled automatically by CI/CD pipelines when code is checked in. The structure allows for automated pipelines to handle linting and testing, while requiring manual directives to invoke action. Versions are not accidentally published, because all code changes that haven't been packaged into a changeset are transparent to the library. As soon as a version is updated (by the library), the CI/CD pipelines will trigger and the library developer will need to merge branches in order to complete the publishing. By enforcing these procedures, `changesets` keeps this library releasing traceable and well-versioned packages.
+
+##### [`vite`](https://vite.dev/)
+Vite is a packaging library that includes a lot of features that make development faster and easier. Packaging and minifying are built in as well as "hot module reload" so that saving any source file will reload the script in the development environment instantly. That is made even better because Vite also dynamically swaps typescript references for javascript references, meaning that a development build can target and debug with the typescript files directly. It is also configurable enough to account for a wide variety of project types.
+
+##### [`vite-plugin-dts`](https://www.npmjs.com/package/vite-plugin-dts)
+This plugin for the `vite` library allows the packaging process to also produce a `.d.ts` file to describe all of the Typescript types exposed by the library. Without that export, other projects that use Typescript would not be able to see the full manifest of exported types.
+
+##### [`@rollup/plugin-terser`](https://www.npmjs.com/package/@rollup/plugin-terser)
+This plugin, which was developed for one of `vite`'s dependencies (`rollup`) but is used in this project by `vite`, provides a type of minification that is not supported by the default library. Using this plugin, the library can be packaged with both unminified and minified code, so that developers who implement the library can debug the code in un-minified files, while still being able to ship a minified version without having to minify it in their own projects.
+
+##### [`@magnit-ce/test-runner`](https://github.com/catapart/magnitce-test-runner)
+This library adds custom HTML elements that allow developers to run simple definitions for automated tests directly in a browser. This element is used in the `dev` directory to provide live automated testing.
+
+##### [`glob`](https://www.npmjs.com/package/glob)
+`glob` is a low-level library that provides full-featured search capabilities to a command-line input. These search features are used by this library to differentiate between test files and source files within the `vite.config` files.
